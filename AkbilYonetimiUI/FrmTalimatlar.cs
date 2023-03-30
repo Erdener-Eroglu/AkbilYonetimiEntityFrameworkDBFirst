@@ -52,11 +52,22 @@ public partial class FrmTalimatlar : Form
         }
     }
 
-    private void TalimatlariDataGrideGetir(bool tumunuGoster = false, string akbilno = null)
+    private void TalimatlariDataGrideGetir(bool tumunuGoster = false)
     {
         try
         {
-            dataGridViewTalimatlar.DataSource = context.KullanicininTalimatlaris.Where(x => x.KullaniciId == GenelIslemler.GirisYapanKullaniciId).ToList();
+           
+            var talimatlar = context.KullanicininTalimatlaris.Where(x => x.KullaniciId == GenelIslemler.GirisYapanKullaniciId);
+
+            if(tumunuGoster == false)
+            {
+                talimatlar = talimatlar.Where(x => x.YuklendiMi == false);
+            }
+            if(cmbAkbiller.SelectedIndex >= 0)
+            {
+                talimatlar = talimatlar.Where(x => x.Akbil.Substring(0, 16) == cmbAkbiller.SelectedValue.ToString());
+            }
+            dataGridViewTalimatlar.DataSource = talimatlar.ToList();
             foreach (DataGridViewColumn item in dataGridViewTalimatlar.Columns)
             {
                 item.Width = 200;
@@ -100,8 +111,8 @@ public partial class FrmTalimatlar : Form
             txtYuklenecekTutar.Clear();
             grpYukleme.Enabled = false;
         }
-        BekleyenTalimatSayisiniGetir();
         TalimatlariDataGrideGetir(chcTumunuGoster.Checked);
+        BekleyenTalimatSayisiniGetir();
     }
 
     private void btnTalimatıKaydet_Click(object sender, EventArgs e)
@@ -138,6 +149,9 @@ public partial class FrmTalimatlar : Form
                 cmbAkbiller.SelectedIndex = -1;
                 cmbAkbiller.Text = "Akbil Seçiniz...";
                 txtYuklenecekTutar.Clear();
+                grpYukleme.Enabled = false;
+                BekleyenTalimatSayisiniGetir();
+                TalimatlariDataGrideGetir(chcTumunuGoster.Checked);
             }
             else
             {
@@ -152,7 +166,15 @@ public partial class FrmTalimatlar : Form
 
     private void chcTumunuGoster_CheckedChanged(object sender, EventArgs e)
     {
-        TalimatlariDataGrideGetir(chcTumunuGoster.Checked);
+
+        if (cmbAkbiller.SelectedIndex >= 0)
+        {
+            TalimatlariDataGrideGetir(chcTumunuGoster.Checked);
+        }
+        else
+        {
+            TalimatlariDataGrideGetir(chcTumunuGoster.Checked);
+        }
     }
 
     private void anaMaenuToolStripMenuItem_Click(object sender, EventArgs e)
@@ -165,8 +187,8 @@ public partial class FrmTalimatlar : Form
     private void cikisYapToolStripMenuItem_Click(object sender, EventArgs e)
     {
         MessageBox.Show("Güle güle çıkış yapıldı.");
-        //GenelIslemler.GirisYapanKullaniciAdSoyad = string.Empty;
-        //GenelIslemler.GirisYapanKullaniciId = 0;
+        GenelIslemler.GirisYapanKullaniciAdSoyad = string.Empty;
+        GenelIslemler.GirisYapanKullaniciId = 0;
         foreach (Form item in Application.OpenForms)
         {
             if (item.Name != "FrmGiris")
@@ -215,7 +237,7 @@ public partial class FrmTalimatlar : Form
                 }
             }
             MessageBox.Show($"Seçtiğiniz {sayac} adet talimat iptal edilmiştir.");
-            TalimatlariDataGrideGetir();
+            TalimatlariDataGrideGetir(chcTumunuGoster.Checked);
             BekleyenTalimatSayisiniGetir();
         }
         catch (Exception hata)
@@ -249,7 +271,7 @@ public partial class FrmTalimatlar : Form
 
             } // foreach bitti.
             MessageBox.Show($"{sayac} adet talimat akbile yüklendi!");
-            TalimatlariDataGrideGetir();
+            TalimatlariDataGrideGetir(chcTumunuGoster.Checked);
             BekleyenTalimatSayisiniGetir();
         }
         catch (Exception hata)
