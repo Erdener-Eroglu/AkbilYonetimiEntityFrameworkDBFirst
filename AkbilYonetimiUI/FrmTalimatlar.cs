@@ -1,9 +1,14 @@
 ﻿using System.Collections;
+using AkbilYonetimiIsKatmani;
+using AkbilYonetimiVeriKatmani;
+using AkbilYonetimiVeriKatmani.Models;
 
 namespace AkbilYonetimiUI;
 
 public partial class FrmTalimatlar : Form
 {
+    AkbilDbContext context = new AkbilDbContext();
+
     public FrmTalimatlar()
     {
         InitializeComponent();
@@ -31,7 +36,15 @@ public partial class FrmTalimatlar : Form
     {
         try
         {
-
+            var bekleyen = context.KullanicininTalimatlaris.Where(x => x.KullaniciId == GenelIslemler.GirisYapanKullaniciId && !x.YuklendiMi);
+            if (cmbAkbiller.SelectedIndex >= 0)
+            {
+                lblBekleyenTalimat.Text = bekleyen.Count(x=>x.Akbil.Substring(0,16) == cmbAkbiller.SelectedValue.ToString()).ToString();
+            }
+            else
+            {
+                lblBekleyenTalimat.Text = bekleyen.Count().ToString();
+            }
         }
         catch (Exception hata)
         {
@@ -43,7 +56,7 @@ public partial class FrmTalimatlar : Form
     {
         try
         {
-
+            dataGridViewTalimatlar.DataSource = context.KullanicininTalimatlaris.Where(x => x.KullaniciId == GenelIslemler.GirisYapanKullaniciId).ToList();
             foreach (DataGridViewColumn item in dataGridViewTalimatlar.Columns)
             {
                 item.Width = 200;
@@ -65,7 +78,9 @@ public partial class FrmTalimatlar : Form
     {
         try
         {
-
+            cmbAkbiller.DataSource = context.Akbillers.Where(x => x.AkbilSahibiId == GenelIslemler.GirisYapanKullaniciId).ToList();
+            cmbAkbiller.DisplayMember = "AkbilNo";
+            cmbAkbiller.ValueMember = "AkbilNo";
         }
         catch (Exception hata)
         {
@@ -108,8 +123,26 @@ public partial class FrmTalimatlar : Form
                 MessageBox.Show("Yükleme miktarı girişi uygun formatta olmalıdır.");
                 return;
             }
-
-            
+            Talimatlar yeniTalimat = new Talimatlar()
+            {
+                OlusturulmaTarihi = DateTime.Now,
+                AkbilId = cmbAkbiller.SelectedValue.ToString(),
+                YuklendiMi = false,
+                YuklenecekTutar = Convert.ToDecimal(txtYuklenecekTutar.Text),
+                YuklenmeTarih = null
+            };
+            context.Talimatlars.Add(yeniTalimat);
+            if(context.SaveChanges() > 0)
+            {
+                MessageBox.Show("Yeni talimat eklendi");
+                cmbAkbiller.SelectedIndex = -1;
+                cmbAkbiller.Text = "Akbil Seçiniz...";
+                txtYuklenecekTutar.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Talimat Eklenemedi");
+            }
         }
         catch (Exception hata)
         {
@@ -174,7 +207,12 @@ public partial class FrmTalimatlar : Form
                     MessageBox.Show($"DİKKAT! {item.Cells["Akbil"].Value} {item.Cells["YuklenecekTutar"].Value} liralık yüklemesi yapılmıştır. YÜKLENEN TALİMAT İPTAL EDİLEMEZ/SİLİNEMEZ!\nİşlemlerinize devam etmek için tamama basınız.");
                     continue;
                 }
-               
+                var secilenTalimat = context.Talimatlars.FirstOrDefault(x => x.Id == (int)item.Cells["Id"].Value);
+                if(secilenTalimat != null)
+                {
+                    context.Talimatlars.Remove(secilenTalimat);
+                    sayac += context.SaveChanges();
+                }
             }
             MessageBox.Show($"Seçtiğiniz {sayac} adet talimat iptal edilmiştir.");
             TalimatlariDataGrideGetir();
@@ -197,8 +235,18 @@ public partial class FrmTalimatlar : Form
                 {
                     continue;
                 }
-                //talimatlar tablosunu güncellemek
-                
+                var secilenTalimat = context.Talimatlars.FirstOrDefault(x => x.Id == (int)item.Cells["Id"].Value);
+                if(secilenTalimat != null)
+                {
+                    secilenTalimat.YuklendiMi = true;
+                    secilenTalimat.YuklenmeTarih = DateTime.Now;
+                    secilenTalimat.Akbil.Bakiye += Convert.ToDecimal(item.Cells["YuklenecekTutar"].Value);
+                    context.Talimatlars.Update(secilenTalimat);
+                    context.Akbillers.Update(secilenTalimat.Akbil);
+                    context.SaveChanges();
+                    sayac++;
+                }
+
             } // foreach bitti.
             MessageBox.Show($"{sayac} adet talimat akbile yüklendi!");
             TalimatlariDataGrideGetir();

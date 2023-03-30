@@ -1,10 +1,13 @@
-﻿using System.Collections;
-
-namespace AkbilYonetimiUI;
+﻿namespace AkbilYonetimiUI;
+using AkbilYonetimiIsKatmani;
+using AkbilYonetimiVeriKatmani;
+using AkbilYonetimiVeriKatmani.Models;
 
 public partial class FrmGiris : Form
 {
+    AkbilDbContext context = new AkbilDbContext();
     public string Email { get; set; } //Kayıt ol formunda kayıt olan kullanıcının emaili buraya gelsin.
+
     public FrmGiris()
     {
         InitializeComponent();
@@ -37,17 +40,30 @@ public partial class FrmGiris : Form
     {
         try
         {
-            //1) Email ve şifre text boxları dolu mu?
-            //2)Girdiği email ve  şifre veri tabanında mevcut mu?
-            //Eğer email şifre doğru ise
-            //Eğer beni hatırla tıklıysa Bilgileri hatırlanacak...
             if (string.IsNullOrEmpty(txtEmail.Text) || string.IsNullOrEmpty(txtSifre.Text))
             {
                 MessageBox.Show("Bilgileri eksiksiz giriniz", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return;
             }
-            
+            var kullanici = context.Kullanicilars.FirstOrDefault(x => x.Email == txtEmail.Text && x.Parola == GenelIslemler.MD5Encryption(txtSifre.Text));
+            if (kullanici == null)
+            {
+                MessageBox.Show("Email ya da şifre yanlış tekrar deneyiniz");
+                return;
+            }
+            else
+            {
+                MessageBox.Show($"Hoşgeldiniz... {kullanici.Ad} {kullanici.Soyad}");
+                GenelIslemler.GirisYapanKullaniciAdSoyad = $"{kullanici.Ad} {kullanici.Soyad}";
+                GenelIslemler.GirisYapanKullaniciId = kullanici.Id;
+                GenelIslemler.GirisYapanKullaniciEmail = kullanici.Email;
 
+                txtEmail.Clear();
+                txtSifre.Clear();
+                FrmAnaSayfa frmA = new FrmAnaSayfa();
+                this.Hide();
+                frmA.Show();
+            }
         }
         catch (Exception hata)
         {

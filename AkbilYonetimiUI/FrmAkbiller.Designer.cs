@@ -30,7 +30,7 @@
         {
             menuStrip1 = new MenuStrip();
             anaMenüToolStripMenuItem = new ToolStripMenuItem();
-            çıkışYapToolStripMenuItem = new ToolStripMenuItem();
+            cikisYapToolStripMenuItem = new ToolStripMenuItem();
             groupBox1 = new GroupBox();
             btnKaydet = new Button();
             cmbAkbilTipler = new ComboBox();
@@ -47,7 +47,7 @@
             // 
             menuStrip1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { anaMenüToolStripMenuItem, çıkışYapToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { anaMenüToolStripMenuItem, cikisYapToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(702, 36);
@@ -61,11 +61,12 @@
             anaMenüToolStripMenuItem.Text = "Ana Sayfa";
             anaMenüToolStripMenuItem.Click += anaMenüToolStripMenuItem_Click;
             // 
-            // çıkışYapToolStripMenuItem
+            // cikisYapToolStripMenuItem
             // 
-            çıkışYapToolStripMenuItem.Name = "çıkışYapToolStripMenuItem";
-            çıkışYapToolStripMenuItem.Size = new Size(109, 32);
-            çıkışYapToolStripMenuItem.Text = "Çıkış Yap";
+            cikisYapToolStripMenuItem.Name = "cikisYapToolStripMenuItem";
+            cikisYapToolStripMenuItem.Size = new Size(109, 32);
+            cikisYapToolStripMenuItem.Text = "Çıkış Yap";
+            cikisYapToolStripMenuItem.Click += cikisYapToolStripMenuItem_Click;
             // 
             // groupBox1
             // 
@@ -170,7 +171,7 @@
 
         private MenuStrip menuStrip1;
         private ToolStripMenuItem anaMenüToolStripMenuItem;
-        private ToolStripMenuItem çıkışYapToolStripMenuItem;
+        private ToolStripMenuItem cikisYapToolStripMenuItem;
         private GroupBox groupBox1;
         private Button btnKaydet;
         private ComboBox cmbAkbilTipler;
