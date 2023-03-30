@@ -146,8 +146,8 @@ public partial class FrmTalimatlar : Form
             if(context.SaveChanges() > 0)
             {
                 MessageBox.Show("Yeni talimat eklendi");
-                cmbAkbiller.SelectedIndex = -1;
-                cmbAkbiller.Text = "Akbil Seçiniz...";
+                //cmbAkbiller.SelectedIndex = -1;
+                //cmbAkbiller.Text = "Akbil Seçiniz...";
                 txtYuklenecekTutar.Clear();
                 grpYukleme.Enabled = false;
                 BekleyenTalimatSayisiniGetir();
