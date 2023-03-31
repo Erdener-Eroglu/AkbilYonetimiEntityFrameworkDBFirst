@@ -63,9 +63,7 @@ public partial class FrmGiris : Form
                 if (checkBoxHatirla.Checked)
                 {
                     Properties.Settings1.Default.BeniHatirla = true;
-                    Properties.Settings1.Default.KullaniciEmail = kullanici.Email;
-                    Properties.Settings1.Default.KullaniciSifre = txtSifre.Text.Trim();
-                    Properties.Settings1.Default.Save();
+                    BeniHatirlaAyarla();
                 }
                 else
                 {
@@ -89,6 +87,12 @@ public partial class FrmGiris : Form
         }
     }
 
+    private void BeniHatirlaAyarla()
+    {
+        Properties.Settings1.Default.KullaniciEmail = txtEmail.Text.Trim();
+        Properties.Settings1.Default.KullaniciSifre = txtSifre.Text.Trim();
+        Properties.Settings1.Default.Save();
+    }
     private void checkBoxHatirla_CheckedChanged(object sender, EventArgs e)
     {
         //Properties.Settings1.Default.BeniHatirla = checkBoxHatirla.Checked;
