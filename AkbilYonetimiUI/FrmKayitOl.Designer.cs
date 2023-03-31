@@ -127,7 +127,7 @@
             // btnKayıtOl
             // 
             btnKayıtOl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            btnKayıtOl.Location = new Point(84, 256);
+            btnKayıtOl.Location = new Point(84, 244);
             btnKayıtOl.Name = "btnKayıtOl";
             btnKayıtOl.Size = new Size(306, 42);
             btnKayıtOl.TabIndex = 5;

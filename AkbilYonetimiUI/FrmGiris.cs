@@ -19,9 +19,12 @@ public partial class FrmGiris : Form
             txtEmail.Text = Email;
         }
         txtSifre.PasswordChar = '*';
-        txtEmail.Text = "erdener.eroglu98@hotmail.com";
-        txtSifre.Text = "123456";
-        checkBoxHatirla.Checked = true;
+        if (Properties.Settings1.Default.BeniHatirla == true)
+        {
+            txtEmail.Text = Properties.Settings1.Default.KullaniciEmail;
+            txtSifre.Text = Properties.Settings1.Default.KullaniciSifre;
+            checkBoxHatirla.Checked = true;
+        }
     }
 
     private void btnKayitOl_Click(object sender, EventArgs e)
@@ -57,7 +60,20 @@ public partial class FrmGiris : Form
                 GenelIslemler.GirisYapanKullaniciAdSoyad = $"{kullanici.Ad} {kullanici.Soyad}";
                 GenelIslemler.GirisYapanKullaniciId = kullanici.Id;
                 GenelIslemler.GirisYapanKullaniciEmail = kullanici.Email;
-
+                if (checkBoxHatirla.Checked)
+                {
+                    Properties.Settings1.Default.BeniHatirla = true;
+                    Properties.Settings1.Default.KullaniciEmail = kullanici.Email;
+                    Properties.Settings1.Default.KullaniciSifre = txtSifre.Text.Trim();
+                    Properties.Settings1.Default.Save();
+                }
+                else
+                {
+                    Properties.Settings1.Default.BeniHatirla = false;
+                    Properties.Settings1.Default.KullaniciEmail = "";
+                    Properties.Settings1.Default.KullaniciSifre = "";
+                    Properties.Settings1.Default.Save();
+                }
                 txtEmail.Clear();
                 txtSifre.Clear();
                 FrmAnaSayfa frmA = new FrmAnaSayfa();
